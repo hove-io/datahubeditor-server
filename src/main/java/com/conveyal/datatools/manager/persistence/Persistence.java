@@ -100,7 +100,7 @@ public class Persistence {
         final String MONGO_URI = String.join("/", MONGO_HOST, MONGO_DB_NAME);
         ConnectionString connectionString = new ConnectionString(
             String.format(
-                "%s://%s%s?retryWrites=true&w=majority",
+                "%s://%s%s?retryWrites=false&w=majority",
                 MONGO_PROTOCOL,
                 userAtPassword,
                 MONGO_URI
