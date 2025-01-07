@@ -25,7 +25,7 @@ public class CreateFeedVersionFromSnapshotJob extends FeedSourceJob {
     private final boolean publishProprietaryFiles;
 
     public CreateFeedVersionFromSnapshotJob(FeedSource feedSource, Snapshot snapshot, Auth0UserProfile owner, boolean publishProprietaryFiles) {
-        super(owner, "Creating Feed Version from Snapshot for " + feedSource.name, JobType.CREATE_FEEDVERSION_FROM_SNAPSHOT);
+        super(owner, "Création d'une version depuis un instantané pour " + feedSource.name, JobType.CREATE_FEEDVERSION_FROM_SNAPSHOT);
         this.feedVersion = new FeedVersion(feedSource, snapshot);
         this.snapshot = snapshot;
         this.publishProprietaryFiles = publishProprietaryFiles;
@@ -33,7 +33,7 @@ public class CreateFeedVersionFromSnapshotJob extends FeedSourceJob {
 
     @Override
     public void jobLogic() {
-        status.update("Exporting snapshot to GTFS...", 10);
+        status.update("Export de l’instantané", 10);
         // Add the jobs to handle this operation in order.
         addNextJob(
             // First export the snapshot to GTFS.

@@ -177,7 +177,7 @@ public abstract class MonitorableJob implements Runnable, Serializable {
                     // Calculate completion based on number of sub jobs remaining.
                     double percentComplete = subJobNumber * 100D / subJobsTotal;
                     // Run sub-task if no error has errored during parent job or previous sub-task execution.
-                    status.update(String.format("Waiting on %s...", subJobName), percentComplete);
+                    status.update(String.format("Opération %s en cours", subJobName), percentComplete);
                     subJob.run();
                     // Record if there has been an error in the execution of the sub-task. (Note: this will not
                     // incorrectly overwrite a 'true' value with 'false' because the sub-task is only run if
@@ -199,7 +199,7 @@ public abstract class MonitorableJob implements Runnable, Serializable {
                 cancel(cancelMessage);
             }
             // Complete the job (as success if no errors encountered, as failure otherwise).
-            if (!parentJobErrored && !subTaskErrored) status.completeSuccessfully("Job complete!");
+            if (!parentJobErrored && !subTaskErrored) status.completeSuccessfully("Opération réussie !");
             else status.complete(true);
             // Run final steps of job pending completion or error. Note: any tasks that depend on job success should
             // check job status in jobFinished to determine if final step should be executed (e.g., storing feed

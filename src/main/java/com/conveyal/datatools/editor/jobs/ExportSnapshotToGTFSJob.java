@@ -31,11 +31,11 @@ public class ExportSnapshotToGTFSJob extends MonitorableJob {
     private final boolean publishProprietaryFiles;
 
     public ExportSnapshotToGTFSJob(Auth0UserProfile owner, Snapshot snapshot, FeedVersion feedVersion, boolean publishProprietaryFiles) {
-        super(owner, "Exporting snapshot " + snapshot.name, JobType.EXPORT_SNAPSHOT_TO_GTFS);
+        super(owner, "Export de l'instantané " + snapshot.name, JobType.EXPORT_SNAPSHOT_TO_GTFS);
         this.snapshot = snapshot;
         this.feedVersion = feedVersion;
         this.publishProprietaryFiles = publishProprietaryFiles;
-        status.update("Starting database snapshot...", 10);
+        status.update("Ouverture de l'instantané...", 10);
     }
 
     public ExportSnapshotToGTFSJob(Auth0UserProfile owner, Snapshot snapshot, boolean publishProprietaryFiles) {
@@ -56,13 +56,13 @@ public class ExportSnapshotToGTFSJob extends MonitorableJob {
             tempFile = File.createTempFile("snapshot", "zip");
         } catch (IOException e) {
             e.printStackTrace();
-            status.fail("Error creating local file for snapshot.", e);
+            status.fail("Erreur lors de la création du fichier depuis l'instantané", e);
             return;
         }
         JdbcGtfsExporter exporter = new JdbcGtfsExporter(snapshot.namespace, tempFile.getAbsolutePath(), DataManager.GTFS_DATA_SOURCE, true, publishProprietaryFiles);
         FeedLoadResult result = exporter.exportTables();
         if (result.fatalException != null) {
-            status.fail(String.format("Error (%s) encountered while exporting database tables.", result.fatalException));
+            status.fail(String.format("Erreur (%s) rencontrée lors de l'export.", result.fatalException));
             return;
         }
 
@@ -71,7 +71,7 @@ public class ExportSnapshotToGTFSJob extends MonitorableJob {
         String bucketPrefix = isNewVersion ? "gtfs" : "snapshots";
         // FIXME: replace with use of refactored FeedStore.
         // Store the GTFS zip locally or on s3.
-        status.update("Writing snapshot to GTFS file", 90);
+        status.update("Ecriture de l'instantané dans le GTFS", 90);
         if (DataManager.useS3) {
             String s3Key = String.format("%s/%s", bucketPrefix, filename);
             try {
@@ -93,7 +93,7 @@ public class ExportSnapshotToGTFSJob extends MonitorableJob {
 
     @Override
     public void jobFinished () {
-        if (!status.error) status.completeSuccessfully("Export complete!");
+        if (!status.error) status.completeSuccessfully("Export complété !");
         // Delete snapshot temp file.
         if (tempFile != null) {
             LOG.info("Deleting temporary GTFS file for exported snapshot at {}", tempFile.getAbsolutePath());

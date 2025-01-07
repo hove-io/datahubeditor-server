@@ -347,7 +347,7 @@ public class DumpController {
      * that needs to be applied to all feeds.
      */
     public static boolean validateAll (boolean load, boolean force, String filterFeedId) throws Exception {
-        LOG.info("validating all feeds...");
+        LOG.info("Validation des flux");
         Collection<FeedVersion> allVersions = Persistence.feedVersions.getAll();
         for(FeedVersion version: allVersions) {
             ValidationResult result = version.validationResult;
