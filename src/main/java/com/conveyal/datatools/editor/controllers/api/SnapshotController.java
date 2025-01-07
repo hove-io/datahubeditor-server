@@ -110,7 +110,7 @@ public class SnapshotController {
         }
         // Begin asynchronous execution.
         JobUtils.heavyExecutor.execute(createSnapshotJob);
-        return SparkUtils.formatJobMessage(createSnapshotJob.jobId, "Creating snapshot.");
+        return SparkUtils.formatJobMessage(createSnapshotJob.jobId, "Opération réussie !");
     }
 
     /**

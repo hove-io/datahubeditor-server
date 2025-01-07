@@ -21,15 +21,15 @@ public class ValidateFeedJob extends FeedVersionJob {
     private final boolean isNewVersion;
 
     public ValidateFeedJob(FeedVersion version, Auth0UserProfile owner, boolean isNewVersion) {
-        super(owner, "Validating Feed", JobType.VALIDATE_FEED);
+        super(owner, "Validation du flux", JobType.VALIDATE_FEED);
         feedVersion = version;
         this.isNewVersion = isNewVersion;
-        status.update("Waiting to begin validation...", 0);
+        status.update("En attente de la validation...", 0);
     }
 
     @Override
     public void jobLogic () {
-        LOG.info("Running ValidateFeedJob for {}", feedVersion.id);
+        LOG.info("Opération ValidateFeedJob en cours pour {}", feedVersion.id);
         feedVersion.validate(status);
     }
 
@@ -50,7 +50,7 @@ public class ValidateFeedJob extends FeedVersionJob {
             }
             // TODO: If ValidateFeedJob is called without a parent job (e.g., to "re-validate" a feed), we should handle
             //  storing the updated ValidationResult in Mongo.
-            status.completeSuccessfully("Validation finished!");
+            status.completeSuccessfully("Validation terminée!");
         } else {
             // If the version was not stored successfully, call FeedVersion#delete to reset things to before the version
             // was uploaded/fetched. Note: delete calls made to MongoDB on the version ID will not succeed, but that is

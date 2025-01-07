@@ -22,7 +22,7 @@ public class NotifyUsersForSubscriptionJob implements Runnable {
     private String subscriptionType;
     private String target;
     private String message;
-    private static final String DEFAULT_NAME = "Data Tools";
+    private static final String DEFAULT_NAME = "DataHub Editor";
     private static final String APPLICATION_NAME = DataManager.getConfigPropertyAsText("application.title");
     private static final String APPLICATION_URL = DataManager.getConfigPropertyAsText("application.public_url");
 

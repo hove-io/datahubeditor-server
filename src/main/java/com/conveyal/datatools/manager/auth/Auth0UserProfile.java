@@ -40,7 +40,7 @@ public class Auth0UserProfile {
      * Utility method for creating a test admin (with application-admin permissions) user.
      */
     public static Auth0UserProfile createTestAdminUser() {
-        return createAdminUser("mock@example.com", "user_id:string");
+        return createAdminUser("operateur@sibr.fr", "user_id:string");
     }
 
     /**

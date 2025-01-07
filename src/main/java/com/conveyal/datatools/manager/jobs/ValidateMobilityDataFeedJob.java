@@ -18,15 +18,15 @@ public class ValidateMobilityDataFeedJob extends FeedVersionJob {
     private final boolean isNewVersion;
 
     public ValidateMobilityDataFeedJob(FeedVersion version, Auth0UserProfile owner, boolean isNewVersion) {
-        super(owner, "Validating Feed using MobilityData", JobType.VALIDATE_FEED);
+        super(owner, "Validation du flux par MobilityData", JobType.VALIDATE_FEED);
         feedVersion = version;
         this.isNewVersion = isNewVersion;
-        status.update("Waiting to begin MobilityData validation...", 0);
+        status.update("En attente de la validation MobilityData...", 0);
     }
 
     @Override
     public void jobLogic () {
-        LOG.info("Running ValidateMobilityDataFeedJob for {}", feedVersion.id);
+        LOG.info("Opération ValidateMobilityDataFeedJob en cours pour {}", feedVersion.id);
         feedVersion.validateMobility(status);
     }
 
@@ -42,7 +42,7 @@ public class ValidateMobilityDataFeedJob extends FeedVersionJob {
                 // the version won't get loaded into MongoDB (even though it exists in postgres).
                 feedVersion.persistFeedVersionAfterValidation(isNewVersion);
             }
-            status.completeSuccessfully("MobilityData validation finished!");
+            status.completeSuccessfully("Validation MobilityData terminée");
         } else {
             // If the version was not stored successfully, call FeedVersion#delete to reset things to before the version
             // was uploaded/fetched. Note: delete calls made to MongoDB on the version ID will not succeed, but that is

@@ -19,10 +19,10 @@ public class LoadFeedJob extends FeedVersionJob {
     private final boolean isNewVersion;
 
     public LoadFeedJob(FeedVersion version, Auth0UserProfile owner, boolean isNewVersion) {
-        super(owner, "Loading GTFS", JobType.LOAD_FEED);
+        super(owner, "Chargement du GTFS", JobType.LOAD_FEED);
         feedVersion = version;
         this.isNewVersion = isNewVersion;
-        status.update("Waiting to load feed...", 0);
+        status.update("Chargement en cours...", 0);
     }
 
     /**
@@ -49,7 +49,7 @@ public class LoadFeedJob extends FeedVersionJob {
     @Override
     public void jobFinished () {
         if (!status.error) {
-            status.completeSuccessfully("Load stage complete!");
+            status.completeSuccessfully("Chargement terminé !");
         }
     }
 

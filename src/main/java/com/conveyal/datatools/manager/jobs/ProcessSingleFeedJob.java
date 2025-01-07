@@ -39,11 +39,11 @@ public class ProcessSingleFeedJob extends FeedVersionJob {
      * Create a job for the given feed version.
      */
     public ProcessSingleFeedJob(FeedVersion feedVersion, Auth0UserProfile owner, boolean isNewVersion) {
-        super(owner, "Processing GTFS for " + (feedVersion.parentFeedSource() != null ? feedVersion.parentFeedSource().name : "unknown feed source"), JobType.PROCESS_FEED);
+        super(owner, "Traitement GTFS pour " + (feedVersion.parentFeedSource() != null ? feedVersion.parentFeedSource().name : "source inconnue"), JobType.PROCESS_FEED);
         this.feedVersion = feedVersion;
         this.feedSource = feedVersion.parentFeedSource();
         this.isNewVersion = isNewVersion;
-        status.update("Waiting...", 0);
+        status.update("En cours...", 0);
         status.uploading = true;
     }
 
@@ -85,7 +85,7 @@ public class ProcessSingleFeedJob extends FeedVersionJob {
      */
     @Override
     public void jobLogic() {
-        LOG.info("Processing feed for {}", feedVersion.id);
+        LOG.info("Traitement du flux pour {}", feedVersion.id);
         FeedTransformRules rules = feedSource.getRulesForRetrievalMethod(feedVersion.retrievalMethod);
         boolean shouldTransform = rules != null;
         if (shouldTransform) {
@@ -171,9 +171,9 @@ public class ProcessSingleFeedJob extends FeedVersionJob {
     @Override
     public void jobFinished() {
         if (!status.error) {
-            status.completeSuccessfully("New version saved.");
+            status.completeSuccessfully("Nouvelle version enregistrée.");
         } else {
-            LOG.warn("Error processing version {} because of {}.", feedVersion.id, getErrorReasonMessage());
+            LOG.warn("Erreur de traitement de la version {} ({}).", feedVersion.id, getErrorReasonMessage());
         }
         // Send notification to those subscribed to feed version updates.
         NotifyUsersForSubscriptionJob.createNotification(
@@ -188,8 +188,8 @@ public class ProcessSingleFeedJob extends FeedVersionJob {
      */
     private String getErrorReasonMessage() {
         return status.exceptionType != null
-            ? String.format("error due to %s", status.exceptionType)
-            : "unknown error";
+            ? String.format("erreur %s", status.exceptionType)
+            : "erreur inconnue";
     }
 
     /**
@@ -199,7 +199,7 @@ public class ProcessSingleFeedJob extends FeedVersionJob {
     public String getNotificationMessage() {
         StringBuilder message = new StringBuilder();
         if (!status.error) {
-            message.append(String.format("New feed version created for %s (valid from %s - %s). ",
+            message.append(String.format("Nouvelle version créée pour %s (valide du %s au %s).",
                 feedSource.name,
                 feedVersion.validationResult.firstCalendarDate,
                 feedVersion.validationResult.lastCalendarDate));

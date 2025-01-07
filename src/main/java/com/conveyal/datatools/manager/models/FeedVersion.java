@@ -109,7 +109,7 @@ public class FeedVersion extends Model implements Serializable {
         this(source, snapshot.retrievalMethod);
         // Set feed version properties.
         originNamespace = snapshot.namespace;
-        name = snapshot.name + " Snapshot Export";
+        name = snapshot.name;
     }
 
     private String generateFeedVersionId(FeedSource source) {
@@ -276,7 +276,7 @@ public class FeedVersion extends Model implements Serializable {
         File gtfsFile;
         // STEP 1. LOAD GTFS feed into relational database
         try {
-            status.update("Unpacking feed...", 15.0);
+            status.update("Récupération du flux...", 15.0);
             // Get SQL schema namespace for the feed version. This is needed for reconnecting with feeds
             // in the database.
             gtfsFile = retrieveGtfsFile();
@@ -360,10 +360,10 @@ public class FeedVersion extends Model implements Serializable {
 
         // VALIDATE GTFS feed.
         try {
-            LOG.info("Beginning validation...");
+            LOG.info("Début de la validation...");
 
             // FIXME: pass status to validate? Or somehow listen to events?
-            status.update("Validating feed...", 33);
+            status.update("Validation du flux...", 33);
 
             // Validate the feed version.
             // Certain extensions, if enabled, have extra validators.
@@ -402,7 +402,7 @@ public class FeedVersion extends Model implements Serializable {
                 );
             }
         } catch (Exception e) {
-            status.fail(String.format("Unable to validate feed %s", this.id), e);
+            status.fail(String.format("Impossible de valider le flux %s", this.id), e);
             // FIXME create validation result with new constructor?
             validationResult = new ValidationResult();
             validationResult.fatalException = "failure!";
@@ -416,8 +416,8 @@ public class FeedVersion extends Model implements Serializable {
 
         // VALIDATE GTFS feed
         try {
-            LOG.info("Beginning MobilityData validation...");
-            status.update("MobilityData Analysis...", 11);
+            LOG.info("Début de la validation MobilityData...");
+            status.update("Analyse MobilityData...", 11);
 
             // Wait for the file to be entirely copied into the directory.
             // 5 seconds + ~1 second per 10mb
@@ -427,19 +427,19 @@ public class FeedVersion extends Model implements Serializable {
             // TODO: do we know that there will always be a namespace?
             String validatorOutputDirectory = "/tmp/datatools_gtfs/" + this.namespace + "/";
 
-            status.update("MobilityData Analysis...", 20);
+            status.update("Analyse MobilityData...", 20);
             // Set up MobilityData validator.
             ValidationRunnerConfig.Builder builder = ValidationRunnerConfig.builder();
             builder.setGtfsSource(gtfsZip.toURI());
             builder.setOutputDirectory(Path.of(validatorOutputDirectory));
             ValidationRunnerConfig mbValidatorConfig = builder.build();
 
-            status.update("MobilityData Analysis...", 40);
+            status.update("Analyse MobilityData...", 40);
             // Run MobilityData validator
             ValidationRunner runner = new ValidationRunner(new VersionResolver(ApplicationType.CLI));
             runner.run(mbValidatorConfig);
 
-            status.update("MobilityData Analysis...", 80);
+            status.update("Analyse MobilityData...", 80);
             // Read generated report and save to Mongo.
             String json;
             try (FileReader fr = new FileReader(validatorOutputDirectory + "report.json")) {
@@ -450,7 +450,7 @@ public class FeedVersion extends Model implements Serializable {
             // This will persist the document to Mongo.
             this.mobilityDataResult = Document.parse(json);
         } catch (Exception e) {
-            status.fail(String.format("Unable to validate feed %s", this.id), e);
+            status.fail(String.format("Impossible de valider le flux %s", this.id), e);
             // FIXME create validation result with new constructor?
             validationResult = new ValidationResult();
             validationResult.fatalException = "failure!";
@@ -566,7 +566,7 @@ public class FeedVersion extends Model implements Serializable {
     public void delete() {
         try {
             // reset lastModified if feed is latest version
-            LOG.info("Deleting feed version {}", this.id);
+            LOG.info("Suppression de la version {}", this.id);
             String id = this.id;
             // Remove any notes for this feed version
             retrieveNotes(true).forEach(Note::delete);
@@ -595,9 +595,9 @@ public class FeedVersion extends Model implements Serializable {
             // recalculate feed expiration notifications in case the latest version has changed
             Scheduler.scheduleExpirationNotifications(fs);
 
-            LOG.info("Version {} deleted", id);
+            LOG.info("Version {} supprimée", id);
         } catch (Exception e) {
-            LOG.warn("Error deleting version", e);
+            LOG.warn("Erreur lors de la suppression de la version", e);
         }
     }
 
